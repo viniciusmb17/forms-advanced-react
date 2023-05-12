@@ -2,10 +2,19 @@ import { useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 
 import './styles/global.css'
+import { supabase } from './lib/supabase'
+
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 
 const createUserSchema = z.object({
+  avatar: z
+    .instanceof(FileList)
+    .transform((list) => list.item(0)!)
+    .refine(
+      (file) => file.size <= 5 * 1024 * 1024,
+      'O arquivo precisa ter no máximo 5Mb',
+    ),
   name: z
     .string()
     .nonempty('O nome é obrigatório')
@@ -59,7 +68,11 @@ export function App() {
     append({ title: '', knowledge: 0 })
   }
 
-  function createUser(data: CreateUserFormData) {
+  async function createUser(data: CreateUserFormData) {
+    await supabase.storage
+      .from('forms-react')
+      .upload(data.avatar.name, data.avatar)
+
     setOutput(JSON.stringify(data, null, 2))
   }
 
@@ -69,6 +82,16 @@ export function App() {
         className="flex flex-col gap-4 w-full max-w-xs"
         onSubmit={handleSubmit(createUser)}
       >
+        <div className="flex flex-col gap-1">
+          <label htmlFor="avatar">Avatar</label>
+          <input type="file" {...register('avatar')} />
+          {errors.avatar && (
+            <span className="text-red-500 text-sm">
+              {errors.avatar.message}
+            </span>
+          )}
+        </div>
+
         <div className="flex flex-col gap-1">
           <label htmlFor="name">Nome</label>
           <input
@@ -80,6 +103,7 @@ export function App() {
             <span className="text-red-500 text-sm">{errors.name.message}</span>
           )}
         </div>
+
         <div className="flex flex-col gap-1">
           <label htmlFor="email">E-mail</label>
           <input
