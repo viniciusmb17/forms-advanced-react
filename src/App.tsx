@@ -5,12 +5,11 @@ export function App() {
   const { register } = useForm()
 
   return (
-    <main className="h-screen bg-zinc-950 text-zinc-300 flex items-center justify-center">
-      <form className="flex flex-col gap-4 w-full max-w-xs">
+    <main className="h-screen bg-zinc-950 text-zinc-300 flex flex-col items-center justify-center gap-4">
         <div className="flex flex-col gap-1">
           <label htmlFor="email">E-mail</label>
           <input
-            className="border border-zinc-200 shadow-sm rounded h-10 px-3"
+            className="border bg-zinc-900 border-zinc-600 shadow-sm rounded h-10 px-3"
             type="email"
             {...register('email')}
           />
@@ -19,7 +18,7 @@ export function App() {
         <div className="flex flex-col gap-1">
           <label htmlFor="password">Senha</label>
           <input
-            className="border border-zinc-200 shadow-sm rounded h-10"
+            className="border bg-zinc-900 border-zinc-600 shadow-sm rounded h-10 px-3"
             type="password"
             {...register('password')}
           />
